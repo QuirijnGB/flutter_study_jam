@@ -33,28 +33,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<TodoEntity> todos = [];
 
   @override
-  void initState() {
-    super.initState();
-
-    _loadData();
-  }
-
-  void _loadData() {
-    Firestore.instance.collection('todos').snapshots().listen((snapshot) {
-      List<TodoEntity> entities = snapshot.documents.map((docSnapshot) {
-        print(docSnapshot.data);
-        return TodoEntity(
-          todo: docSnapshot.data['todo'],
-          done: docSnapshot.data['done'],
-        );
-      }).toList();
-      setState(() {
-        this.todos = entities;
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -90,11 +68,23 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          Expanded(
-            child: ListView(
-              children: todos.map((todo) => TodoListItem(todo: todo)).toList(),
-            ),
-          ),
+          StreamBuilder<QuerySnapshot>(
+              stream: Firestore.instance.collection('todos').snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) return const Text('Loading...');
+
+                List<TodoListItem> listItems = snapshot.data.documents
+                    .map((docSnapshot) => TodoEntity.fromJSON(docSnapshot.data))
+                    .map((todo) => TodoListItem(todo: todo))
+                    .toList();
+
+                return Expanded(
+                  child: ListView(
+                    children: listItems,
+                  ),
+                );
+              })
         ],
       ),
     );
@@ -137,4 +127,8 @@ class TodoEntity {
     @required this.todo,
     @required this.done,
   });
+
+  factory TodoEntity.fromJSON(Map<String, dynamic> json) {
+    return TodoEntity(todo: json['todo'], done: json['done']);
+  }
 }
