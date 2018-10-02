@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -29,12 +30,29 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final newTodoController = TextEditingController();
 
-  List<TodoEntity> todos = [
-    TodoEntity(todo: "Prepare content for next meetup", done: false),
-    TodoEntity(todo: "Find venue", done: false),
-    TodoEntity(todo: "Organise food", done: false),
-    TodoEntity(todo: "Draft Meetup event", done: false),
-  ];
+  List<TodoEntity> todos = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadData();
+  }
+
+  void _loadData() {
+    Firestore.instance.collection('todos').snapshots().listen((snapshot) {
+      List<TodoEntity> entities = snapshot.documents.map((docSnapshot) {
+        print(docSnapshot.data);
+        return TodoEntity(
+          todo: docSnapshot.data['todo'],
+          done: docSnapshot.data['done'],
+        );
+      }).toList();
+      setState(() {
+        this.todos = entities;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
