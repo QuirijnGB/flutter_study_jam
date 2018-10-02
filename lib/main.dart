@@ -108,12 +108,17 @@ class TodoListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(todo.todo),
+    return Opacity(
+      opacity: todo.done ? 0.30 : 1.0,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              todo.todo,
+            ),
+          ),
         ),
       ),
     );
