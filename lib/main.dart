@@ -33,10 +33,34 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Text(
-          'Hello Sydney',
-        ),
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: TextFormField(
+                      decoration:
+                          InputDecoration(labelText: "What needs to be done?"),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => {},
+                  icon: Icon(Icons.add),
+                ),
+              ],
+            ),
+          ),
+          Center(
+            child: Text(
+              'Hello Sydney',
+            ),
+          ),
+        ],
       ),
     );
   }
