@@ -66,7 +66,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance.collection('todos').snapshots(),
+              stream: Firestore.instance
+                  .collection('todos')
+                  .orderBy('done')
+                  .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) return const Text('Loading...');
