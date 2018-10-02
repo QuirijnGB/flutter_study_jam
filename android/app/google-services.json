@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "873306742347",
+    "firebase_url": "https://flutter-study-jam-99ec1.firebaseio.com",
+    "project_id": "flutter-study-jam-99ec1",
+    "storage_bucket": "flutter-study-jam-99ec1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873306742347:android:a817e2f472707f31",
+        "android_client_info": {
+          "package_name": "com.example.flutterstudyjamweek2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873306742347-jhml3fjjl1n84559cetnqke4f4mbnuuk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL50vl9bI1Yq9OsUIdzsWg80IwjW06Tko"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
