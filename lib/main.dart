@@ -74,9 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Expanded(
             child: ListView(
-              children: todos.map((todo) {
-                return Text(todo.todo);
-              }).toList(),
+              children: todos.map((todo) => TodoListItem(todo: todo)).toList(),
             ),
           ),
         ],
@@ -88,6 +86,28 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     newTodoController.dispose();
     super.dispose();
+  }
+}
+
+class TodoListItem extends StatelessWidget {
+  final todo;
+
+  const TodoListItem({
+    Key key,
+    this.todo,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(todo.todo),
+        ),
+      ),
+    );
   }
 }
 
