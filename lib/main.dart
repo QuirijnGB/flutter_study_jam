@@ -27,6 +27,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final newTodoController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,13 +45,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: TextFormField(
+                      controller: newTodoController,
                       decoration:
                           InputDecoration(labelText: "What needs to be done?"),
                     ),
                   ),
                 ),
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => print(newTodoController.text),
                   icon: Icon(Icons.add),
                 ),
               ],
@@ -63,5 +66,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    newTodoController.dispose();
+    super.dispose();
   }
 }
