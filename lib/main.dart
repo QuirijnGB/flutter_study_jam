@@ -30,8 +30,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final newTodoController = TextEditingController();
 
-  List<TodoEntity> todos = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,10 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                   onPressed: () {
                     print(newTodoController.text);
-                    setState(() {
-                      todos.add(TodoEntity(
-                          todo: newTodoController.text, done: false));
-                    });
+                    _addTodo(
+                        TodoEntity(todo: newTodoController.text, done: false));
+
                     newTodoController.clear();
                   },
                   icon: Icon(Icons.add),
@@ -88,6 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  void _addTodo(TodoEntity entity) {
+    Firestore.instance.collection('todos').add(entity.toJSON());
   }
 
   @override
@@ -130,5 +131,12 @@ class TodoEntity {
 
   factory TodoEntity.fromJSON(Map<String, dynamic> json) {
     return TodoEntity(todo: json['todo'], done: json['done']);
+  }
+
+  Map<String, dynamic> toJSON() {
+    return {
+      "todo": this.todo,
+      "done": this.done,
+    };
   }
 }
