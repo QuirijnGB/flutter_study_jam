@@ -9,7 +9,8 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: 'GDG Flutter Sydney',
       theme: new ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.amber,
+        accentColor: Colors.amberAccent,
       ),
       home: new MyHomePage(title: 'GDG Flutter Sydney'),
     );
