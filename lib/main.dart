@@ -29,6 +29,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final newTodoController = TextEditingController();
 
+  List<TodoEntity> todos = [
+    TodoEntity(todo: "Prepare content for next meetup", done: false),
+    TodoEntity(todo: "Find venue", done: false),
+    TodoEntity(todo: "Organise food", done: false),
+    TodoEntity(todo: "Draft Meetup event", done: false),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,9 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          Center(
-            child: Text(
-              'Hello Sydney',
+          Expanded(
+            child: ListView(
+              children: todos.map((todo) {
+                return Text(todo.todo);
+              }).toList(),
             ),
           ),
         ],
@@ -73,4 +82,14 @@ class _MyHomePageState extends State<MyHomePage> {
     newTodoController.dispose();
     super.dispose();
   }
+}
+
+class TodoEntity {
+  String todo;
+  bool done;
+
+  TodoEntity({
+    @required this.todo,
+    @required this.done,
+  });
 }
