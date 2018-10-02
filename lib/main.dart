@@ -59,7 +59,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => print(newTodoController.text),
+                  onPressed: () {
+                    print(newTodoController.text);
+                    setState(() {
+                      todos.add(TodoEntity(
+                          todo: newTodoController.text, done: false));
+                    });
+                    newTodoController.clear();
+                  },
                   icon: Icon(Icons.add),
                 ),
               ],
