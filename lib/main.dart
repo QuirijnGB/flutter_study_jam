@@ -91,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               todo.done = done;
                               _updateTodo(todo);
                             },
+                            removeCallback: () => _deleteTodo(todo),
                           ),
                     )
                     .toList();
@@ -113,6 +114,11 @@ class _MyHomePageState extends State<MyHomePage> {
         .updateData(entity.toJSON());
   }
 
+  void _deleteTodo(TodoEntity entity) {
+    print("deleting ${entity.id}");
+    Firestore.instance.collection('todos').document(entity.id).delete();
+  }
+
   void _addTodo(TodoEntity entity) {
     Firestore.instance.collection('todos').add(entity.toJSON());
   }
@@ -125,15 +131,18 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 typedef TodoChangeCallback = void Function(bool done);
+typedef TodoRemoveCallback = void Function();
 
 class TodoListItem extends StatelessWidget {
   final todo;
   final TodoChangeCallback callback;
+  final TodoRemoveCallback removeCallback;
 
   const TodoListItem({
     Key key,
     this.todo,
     this.callback,
+    this.removeCallback,
   }) : super(key: key);
 
   @override
@@ -144,9 +153,8 @@ class TodoListItem extends StatelessWidget {
         padding: const EdgeInsets.only(left: 4.0, right: 4.0),
         child: Card(
           child: InkWell(
-            onTap: () {
-              this.callback(!todo.done);
-            },
+            onTap: () => this.callback(!todo.done),
+            onLongPress: () => this.removeCallback(),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
