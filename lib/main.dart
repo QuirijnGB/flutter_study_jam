@@ -54,9 +54,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    print(newTodoController.text);
                     _addTodo(
-                        TodoEntity(todo: newTodoController.text, done: false));
+                      TodoEntity(
+                        todo: newTodoController.text,
+                        done: false,
+                      ),
+                    );
 
                     newTodoController.clear();
                   },
@@ -75,8 +78,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (!snapshot.hasData) return const Text('Loading...');
 
                 List<TodoListItem> listItems = snapshot.data.documents
-                    .map((docSnapshot) => TodoEntity.fromJSON(docSnapshot.data))
-                    .map((todo) => TodoListItem(todo: todo))
+                    .map(
+                      (docSnapshot) => TodoEntity(
+                          id: docSnapshot.documentID,
+                          todo: docSnapshot.data["todo"],
+                          done: docSnapshot.data["done"]),
+                    )
+                    .map(
+                      (todo) => TodoListItem(
+                            todo: todo,
+                            callback: (done) {
+                              todo.done = done;
+                              _updateTodo(todo);
+                            },
+                          ),
+                    )
                     .toList();
 
                 return Expanded(
@@ -90,6 +106,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _updateTodo(TodoEntity entity) {
+    Firestore.instance
+        .collection('todos')
+        .document(entity.id)
+        .updateData(entity.toJSON());
+  }
+
   void _addTodo(TodoEntity entity) {
     Firestore.instance.collection('todos').add(entity.toJSON());
   }
@@ -101,12 +124,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+typedef TodoChangeCallback = void Function(bool done);
+
 class TodoListItem extends StatelessWidget {
   final todo;
+  final TodoChangeCallback callback;
 
   const TodoListItem({
     Key key,
     this.todo,
+    this.callback,
   }) : super(key: key);
 
   @override
@@ -116,10 +143,15 @@ class TodoListItem extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(left: 4.0, right: 4.0),
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              todo.todo,
+          child: InkWell(
+            onTap: () {
+              this.callback(!todo.done);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                todo.todo,
+              ),
             ),
           ),
         ),
@@ -129,17 +161,15 @@ class TodoListItem extends StatelessWidget {
 }
 
 class TodoEntity {
+  String id;
   String todo;
   bool done;
 
   TodoEntity({
+    this.id,
     @required this.todo,
     @required this.done,
   });
-
-  factory TodoEntity.fromJSON(Map<String, dynamic> json) {
-    return TodoEntity(todo: json['todo'], done: json['done']);
-  }
 
   Map<String, dynamic> toJSON() {
     return {
