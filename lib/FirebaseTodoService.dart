@@ -18,4 +18,22 @@ class FirebaseTodoService extends TodoService {
                 done: docSnapshot.data["done"]),
           )
           .toList());
+
+  @override
+  Future<void> addArticle(TodoEntity todo) {
+    return Firestore.instance.collection('todos').add(todo.toJSON());
+  }
+
+  @override
+  Future<void> deleteArticle(String id) {
+    return Firestore.instance.collection('todos').document(id).delete();
+  }
+
+  @override
+  Future<void> updateArticle(TodoEntity todo) {
+    return Firestore.instance
+        .collection('todos')
+        .document(todo.id)
+        .updateData(todo.toJSON());
+  }
 }

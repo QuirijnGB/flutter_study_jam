@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_study_jam_week_2/BlocProvider.dart';
 import 'package:flutter_study_jam_week_2/FirebaseTodoService.dart';
@@ -61,12 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    _addTodo(
-                      TodoEntity(
-                        todo: newTodoController.text,
-                        done: false,
-                      ),
-                    );
+                    BlocProvider.of(context).bloc.addArticle(
+                          TodoEntity(
+                            todo: newTodoController.text,
+                            done: false,
+                          ),
+                        );
 
                     newTodoController.clear();
                   },
@@ -87,9 +86,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             todo: todo,
                             callback: (done) {
                               todo.done = done;
-                              _updateTodo(todo);
+                              BlocProvider.of(context).bloc.updateTodo(todo);
                             },
-                            removeCallback: () => _deleteTodo(todo),
+                            removeCallback: () => BlocProvider.of(context)
+                                .bloc
+                                .deleteTodo(todo.id),
                           ),
                     )
                     .toList();
@@ -103,22 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
-  }
-
-  void _updateTodo(TodoEntity entity) {
-    Firestore.instance
-        .collection('todos')
-        .document(entity.id)
-        .updateData(entity.toJSON());
-  }
-
-  void _deleteTodo(TodoEntity entity) {
-    print("deleting ${entity.id}");
-    Firestore.instance.collection('todos').document(entity.id).delete();
-  }
-
-  void _addTodo(TodoEntity entity) {
-    Firestore.instance.collection('todos').add(entity.toJSON());
   }
 
   @override
