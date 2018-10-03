@@ -1,5 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_study_jam_week_2/BlocProvider.dart';
+import 'package:flutter_study_jam_week_2/FirebaseTodoService.dart';
+import 'package:flutter_study_jam_week_2/TodoBloc.dart';
+import 'package:flutter_study_jam_week_2/TodoEntity.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +17,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.amber,
         accentColor: Colors.amberAccent,
       ),
-      home: MyHomePage(title: 'GDG Flutter Sydney'),
+      home: BlocProvider(
+        bloc: TodoBloc(FirebaseTodoService()),
+        child: MyHomePage(title: 'GDG Flutter Sydney'),
+      ),
     );
   }
 }
@@ -68,22 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance
-                  .collection('todos')
-                  .orderBy('done')
-                  .snapshots(),
+          StreamBuilder<List<TodoEntity>>(
+              stream: BlocProvider.of(context).bloc.todos,
               builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                  AsyncSnapshot<List<TodoEntity>> snapshot) {
                 if (!snapshot.hasData) return const Text('Loading...');
 
-                List<TodoListItem> listItems = snapshot.data.documents
-                    .map(
-                      (docSnapshot) => TodoEntity(
-                          id: docSnapshot.documentID,
-                          todo: docSnapshot.data["todo"],
-                          done: docSnapshot.data["done"]),
-                    )
+                List<TodoListItem> listItems = snapshot.data
                     .map(
                       (todo) => TodoListItem(
                             todo: todo,
@@ -165,24 +163,5 @@ class TodoListItem extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class TodoEntity {
-  String id;
-  String todo;
-  bool done;
-
-  TodoEntity({
-    this.id,
-    @required this.todo,
-    @required this.done,
-  });
-
-  Map<String, dynamic> toJSON() {
-    return {
-      "todo": this.todo,
-      "done": this.done,
-    };
   }
 }
